@@ -1,0 +1,18 @@
+[
+{
+  "modid" : "mod_HyperSigns",
+  "name" : "HyperSigns",
+  "version" : "1.0",
+  "url" : "http://www.enderville.com/",
+  "credits" : "",
+  "authors": [
+    "Didz"
+  ],
+  "description": "Client-side plugin for extended in-game sign interaction.",
+  "logoFile" : "",
+  "updateUrl" : "",
+  "parent" : "",
+  "screenshots": [
+  ]
+}
+]
