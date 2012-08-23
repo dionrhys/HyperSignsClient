@@ -20,79 +20,67 @@ package com.enderville.hypersigns;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.src.EntityPlayer;
-import net.minecraft.src.ModLoader;
 import net.minecraft.src.NetworkManager;
-import net.minecraft.src.Packet1Login;
 import net.minecraft.src.Packet250CustomPayload;
-import net.minecraft.src.forge.*;
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.network.IPacketHandler;
+import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
+import cpw.mods.fml.common.network.Player;
 
-public class mod_HyperSigns extends NetworkMod implements IConnectionHandler, IPacketHandler {
-
-	/**
-	 * The mod's version number.
-	 */
-	private static final String VERSION = "1.0";
+@Mod(modid = "mod_HyperSigns", name = "HyperSigns", version = "1.1")
+@NetworkMod(
+		clientSideRequired = false,
+		serverSideRequired = false,
+		clientPacketHandlerSpec = @SidedPacketHandler(
+			channels = {mod_HyperSigns.CHANNEL_NAME},
+			packetHandler = mod_HyperSigns.class
+		)
+	)
+public class mod_HyperSigns implements IPacketHandler {
 
 	/**
 	 * Channel name to use for Packet 250 messaging. The '1' in the name is the
 	 * protocol version.
 	 */
-	private static final String CHANNEL_NAME = "HyperSigns1";
+	protected static final String CHANNEL_NAME = "HyperSigns1";
 
 	private FMLClientHandler fmlClient;
 
-	@Override
-	public String getVersion() {
-		return VERSION;
-	}
-
-	@Override
-	public void load() {
-		if (!MinecraftForge.isClient()) {
-			MinecraftForge.killMinecraft(this.toString(),
-					"One does not simply put the HyperSigns Client on a server!");
+	@Init
+	public void load(FMLInitializationEvent event) {
+		if (FMLCommonHandler.instance().getSide().isClient()) {
+			fmlClient = FMLClientHandler.instance();
+		} else {
+			FMLCommonHandler.instance().getFMLLogger().warning("One does not simply put the HyperSigns Client on a server!");
 		}
-
-		fmlClient = FMLClientHandler.instance();
-
-		MinecraftForge.registerConnectionHandler(this);
-	}
-
-	@Override
-	public boolean clientSideRequired() {
-		return false;
-	}
-
-	@Override
-	public boolean serverSideRequired() {
-		return false;
 	}
 
 	/**
 	 * Handle incoming data on the plugin messaging channel.
 	 * 
 	 * @param network
-	 *            The NetworkManager for the current connection.
-	 * @param channel
-	 *            The Channel the message came on.
-	 * @param data
-	 *            The message payload.
+	 *            NetworkManager for the current connection.
+	 * @param packet
+	 *            Custom payload received.
+	 * @param player
+	 *            Player that sent the message (server only).
 	 */
 	@Override
-	public void onPacketData(NetworkManager network, String channel, byte[] data) {
-		if (!channel.equals(CHANNEL_NAME) || data.length < 1) {
+	public void onPacketData(NetworkManager manager,
+			Packet250CustomPayload packet, Player player) {
+		if (!packet.channel.equals(CHANNEL_NAME) || packet.length == 0) {
 			return;
 		}
 
-		ByteArrayInputStream message = new ByteArrayInputStream(data);
+		ByteArrayInputStream message = new ByteArrayInputStream(packet.data);
 		int command = message.read();
 
 		switch (command) {
@@ -133,19 +121,6 @@ public class mod_HyperSigns extends NetworkMod implements IConnectionHandler, IP
 		}
 
 		fmlClient.displayGuiScreen(fmlClient.getClient().thePlayer, new GuiRemoteLinkConfirm(uri));
-	}
-
-	@Override
-	public void onConnect(NetworkManager network) {
-	}
-
-	@Override
-	public void onLogin(NetworkManager network, Packet1Login login) {
-		MessageManager.getInstance().registerChannel(network, this, CHANNEL_NAME);
-	}
-
-	@Override
-	public void onDisconnect(NetworkManager network, String message, Object[] args) {
 	}
 
 }

@@ -33,7 +33,7 @@ public class GuiRemoteLinkConfirm extends GuiConfirmOpenLink {
 	}
 
 	@Override
-	public void func_50052_d() {
+	public void func_73945_e() {
 		setClipboardString(uri.toString());
 	}
 
