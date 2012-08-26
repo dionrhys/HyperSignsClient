@@ -35,16 +35,16 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
-@Mod(modid = "mod_HyperSigns", name = "HyperSigns", version = "1.1")
+@Mod(modid = "HyperSigns", name = "HyperSigns", version = "1.1")
 @NetworkMod(
 		clientSideRequired = false,
 		serverSideRequired = false,
 		clientPacketHandlerSpec = @SidedPacketHandler(
-			channels = {mod_HyperSigns.CHANNEL_NAME},
-			packetHandler = mod_HyperSigns.class
+			channels = {HyperSigns.CHANNEL_NAME},
+			packetHandler = HyperSigns.class
 		)
 	)
-public class mod_HyperSigns implements IPacketHandler {
+public class HyperSigns implements IPacketHandler {
 
 	/**
 	 * Channel name to use for Packet 250 messaging. The '1' in the name is the
