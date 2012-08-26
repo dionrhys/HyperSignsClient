@@ -19,13 +19,16 @@
 package com.enderville.hypersigns;
 
 import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.logging.Level;
 
 import net.minecraft.src.NetworkManager;
 import net.minecraft.src.Packet250CustomPayload;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -34,7 +37,7 @@ public class PacketHandler implements IPacketHandler {
 	/**
 	 * Handle incoming data on the plugin messaging channel.
 	 *
-	 * @param network
+	 * @param manager
 	 *            NetworkManager for the current connection.
 	 * @param packet
 	 *            Custom payload received.
@@ -48,15 +51,20 @@ public class PacketHandler implements IPacketHandler {
 			return;
 		}
 
-		ByteArrayInputStream message = new ByteArrayInputStream(packet.data);
-		int command = message.read();
+		DataInputStream data = new DataInputStream(new ByteArrayInputStream(packet.data));
 
-		switch (command) {
-		// TODO: Put server commands into some sort of enum
-		case 0x01:
-			handleUrlTrigger(message);
-		default:
-			return;
+		try {
+			byte command = data.readByte();
+
+			switch (command) {
+				// TODO: Put server commands into some sort of enum
+				case 0x01:
+					handleUrlTrigger(data);
+				default:
+					return;
+			}
+		} catch (IOException e) {
+			FMLLog.log(Level.SEVERE, e, "[HyperSigns] Invalid packet received from server.");
 		}
 	}
 
@@ -64,20 +72,12 @@ public class PacketHandler implements IPacketHandler {
 	 * Handle the receipt of a URL Trigger command. The client will be prompted
 	 * to open the link received in the packet.
 	 *
-	 * @param message
-	 *            The input stream containing packet payload.
+	 * @param data
+	 *            The DataInputStream containing packet payload.
+	 * @throws IOException
 	 */
-	private void handleUrlTrigger(ByteArrayInputStream message) {
-		byte[] urlBytes = new byte[message.available()];
-
-		try {
-			message.read(urlBytes);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		String urlString = new String(urlBytes);
+	private void handleUrlTrigger(DataInputStream data) throws IOException {
+		String urlString = data.readUTF();
 		URI uri;
 
 		try {
