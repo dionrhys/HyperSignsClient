@@ -52,8 +52,6 @@ public class HyperSigns {
 	 */
 	protected static final String CHANNEL_NAME = "HyperSigns1";
 
-	private FMLClientHandler fmlClient;
-
 	@Init
 	public void load(FMLInitializationEvent event) {
 		if (!FMLCommonHandler.instance().getSide().isClient()) {

@@ -57,9 +57,7 @@ public class GuiRemoteLinkDummyScreen extends GuiScreen {
 
 			this.clickedURI = null;
 
-			// I have no clue what I'm doing! :D
-			FMLClientHandler fmlClient = FMLClientHandler.instance();
-			fmlClient.getClient().thePlayer.closeScreen();
+			FMLClientHandler.instance().getClient().thePlayer.closeScreen();
 		}
 	}
 
