@@ -41,10 +41,10 @@ import cpw.mods.fml.common.network.Player;
 		serverSideRequired = false,
 		clientPacketHandlerSpec = @SidedPacketHandler(
 			channels = {HyperSigns.CHANNEL_NAME},
-			packetHandler = HyperSigns.class
+			packetHandler = PacketHandler.class
 		)
 	)
-public class HyperSigns implements IPacketHandler {
+public class HyperSigns {
 
 	/**
 	 * Channel name to use for Packet 250 messaging. The '1' in the name is the
@@ -56,71 +56,9 @@ public class HyperSigns implements IPacketHandler {
 
 	@Init
 	public void load(FMLInitializationEvent event) {
-		if (FMLCommonHandler.instance().getSide().isClient()) {
-			fmlClient = FMLClientHandler.instance();
-		} else {
+		if (!FMLCommonHandler.instance().getSide().isClient()) {
 			FMLCommonHandler.instance().getFMLLogger().warning("One does not simply put the HyperSigns Client on a server!");
 		}
-	}
-
-	/**
-	 * Handle incoming data on the plugin messaging channel.
-	 * 
-	 * @param network
-	 *            NetworkManager for the current connection.
-	 * @param packet
-	 *            Custom payload received.
-	 * @param player
-	 *            Player that sent the message (server only).
-	 */
-	@Override
-	public void onPacketData(NetworkManager manager,
-			Packet250CustomPayload packet, Player player) {
-		if (!packet.channel.equals(CHANNEL_NAME) || packet.length == 0) {
-			return;
-		}
-
-		ByteArrayInputStream message = new ByteArrayInputStream(packet.data);
-		int command = message.read();
-
-		switch (command) {
-		// TODO: Put server commands into some sort of enum
-		case 0x01:
-			handleUrlTrigger(message);
-		default:
-			return;
-		}
-	}
-
-	/**
-	 * Handle the receipt of a URL Trigger command. The client will be prompted
-	 * to open the link received in the packet.
-	 * 
-	 * @param message
-	 *            The input stream containing packet payload.
-	 */
-	private void handleUrlTrigger(ByteArrayInputStream message) {
-		byte[] urlBytes = new byte[message.available()];
-
-		try {
-			message.read(urlBytes);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		String urlString = new String(urlBytes);
-		URI uri;
-
-		try {
-			URL url = new URL(urlString);
-			uri = url.toURI();
-		} catch (Exception e) {
-			// Gotta catch 'em all!
-			return;
-		}
-
-		fmlClient.displayGuiScreen(fmlClient.getClient().thePlayer, new GuiRemoteLinkConfirm(uri));
 	}
 
 }
