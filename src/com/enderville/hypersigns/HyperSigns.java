@@ -47,10 +47,9 @@ import cpw.mods.fml.common.network.Player;
 public class HyperSigns {
 
 	/**
-	 * Channel name to use for Packet 250 messaging. The '2' in the name is the
-	 * protocol version.
+	 * Channel name to use for Packet 250 messaging.
 	 */
-	public static final String CHANNEL_NAME = "HyperSigns2";
+	public static final String CHANNEL_NAME = "HyperSigns";
 
 	@Init
 	public void load(FMLInitializationEvent event) {

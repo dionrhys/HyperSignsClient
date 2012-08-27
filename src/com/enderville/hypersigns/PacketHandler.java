@@ -47,7 +47,7 @@ public class PacketHandler implements IPacketHandler {
 	@Override
 	public void onPacketData(NetworkManager manager,
 			Packet250CustomPayload packet, Player player) {
-		if (!packet.channel.equals(HyperSigns.CHANNEL_NAME) || packet.length == 0) {
+		if (!packet.channel.equals(HyperSigns.CHANNEL_NAME)) {
 			return;
 		}
 
