@@ -20,8 +20,10 @@ package com.enderville.hypersigns;
 
 import java.net.URI;
 
+import net.minecraft.src.GuiButton;
 import net.minecraft.src.GuiConfirmOpenLink;
 import net.minecraft.src.GuiScreen;
+import net.minecraft.src.StringTranslate;
 
 public class GuiRemoteLinkConfirm extends GuiConfirmOpenLink {
 
@@ -30,6 +32,18 @@ public class GuiRemoteLinkConfirm extends GuiConfirmOpenLink {
 	public GuiRemoteLinkConfirm(URI uri) {
 		super(new GuiRemoteLinkDummyScreen(uri), uri.toString(), 0);
 		this.uri = uri;
+	}
+
+	/**
+	 * Adds the buttons (and other controls) to the screen in question.
+	 * Overridden here because the original method has a visual bug with positioning the buttons.
+	 */
+	@Override
+	public void initGui()
+	{
+		this.controlList.add(new GuiButton(0, this.width / 2 - 155 + 0, this.height / 6 + 96, 100, 20, this.buttonText1));
+		this.controlList.add(new GuiButton(2, this.width / 2 - 155 + 105, this.height / 6 + 96, 100, 20, StringTranslate.getInstance().translateKey("chat.copy")));
+		this.controlList.add(new GuiButton(1, this.width / 2 - 155 + 210, this.height / 6 + 96, 100, 20, this.buttonText2));
 	}
 
 	@Override
